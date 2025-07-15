@@ -6,8 +6,6 @@ import (
 	"encoding"
 	"errors"
 	"fmt"
-	"github.com/sandertv/go-raknet/internal"
-	"github.com/sandertv/go-raknet/internal/message"
 	"io"
 	"net"
 	"net/netip"
@@ -15,6 +13,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/sandertv/go-raknet/internal"
+	"github.com/sandertv/go-raknet/internal/message"
 )
 
 const (
@@ -131,7 +132,7 @@ func (conn *Conn) effectiveMTU() uint16 {
 // out.
 func (conn *Conn) startTicking() {
 	var (
-		interval = time.Second / 10
+		interval = time.Millisecond // lower interval to ensure accurate ping display
 		ticker   = time.NewTicker(interval)
 		i        int64
 		acksLeft int
@@ -655,7 +656,13 @@ func (conn *Conn) writeTo(p []byte, raddr net.Addr) error {
 	return nil
 }
 
+var startTime time.Time
+
+func init() {
+	startTime = time.Now()
+}
+
 // timestamp returns a timestamp in milliseconds.
 func timestamp() int64 {
-	return time.Now().UnixNano() / int64(time.Millisecond)
+	return (time.Now().UnixNano() - startTime.UnixNano()) / int64(time.Millisecond)
 }

@@ -4,11 +4,12 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/sandertv/go-raknet/internal/message"
 	"hash/crc32"
 	"log/slog"
 	"net"
 	"time"
+
+	"github.com/sandertv/go-raknet/internal/message"
 )
 
 type connectionHandler interface {
@@ -244,7 +245,8 @@ func (h dialerConnectionHandler) handleConnectionRequestAccepted(conn *Conn, b [
 	}
 	select {
 	case <-conn.connected:
-		return errUnexpectedAdditionalCRA
+		//return errUnexpectedAdditionalCRA
+		return nil
 	default:
 		// Make sure to send NewIncomingConnection before closing conn.connected.
 		err := conn.send(&message.NewIncomingConnection{ServerAddress: resolve(conn.raddr), PingTime: pk.PongTime, PongTime: timestamp()})
