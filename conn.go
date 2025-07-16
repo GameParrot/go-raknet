@@ -143,7 +143,7 @@ func (conn *Conn) startTicking() {
 		case t := <-ticker.C:
 			i++
 			conn.flushACKs()
-			if i%3 == 0 {
+			if i%300 == 0 {
 				conn.checkResend(t)
 			}
 			if unix := conn.closing.Load(); unix != 0 {
@@ -161,7 +161,7 @@ func (conn *Conn) startTicking() {
 				}
 				continue
 			}
-			if i%5 == 0 {
+			if i%500 == 0 {
 				// Ping the other end periodically to prevent timeouts.
 				_ = conn.send(&message.ConnectedPing{PingTime: timestamp()})
 
